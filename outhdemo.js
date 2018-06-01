@@ -17,7 +17,7 @@ app.get('/oauth20/democallback/', (req, res) => {
         "&redirect_uri=" + redirect_uri +
         "&client_id=" + client_id +
         "&client_secret=" + client_secret;
-        console.log(values)
+
     request.post({
             url: 'https://accounts.google.com/o/oauth2/token',
             form: values,
@@ -28,7 +28,20 @@ app.get('/oauth20/democallback/', (req, res) => {
         function(err, httpResponse, body) {
             if (!err) {
 
-                res.send(body);
+                body = JSON.parse(body);
+                var access_token = body.access_token;
+                var auth = "Bearer " + access_token
+                console.log(auth)
+                request({
+                    url: 'https://www.googleapis.com/gmail/v1/users/immaisoncrosby@gmail.com/messages',
+                    headers: {
+                        'Authorization': auth
+                    }
+                }, function(err, response, body) {
+                    body = JSON.parse(body);
+                    res.send(body)
+                })
+
             }
             else {
                 res.send(err)
