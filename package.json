@@ -1,0 +1,26 @@
+{
+  "name": "outh20demo",
+  "version": "1.0.0",
+  "description": "demonstration of outh 2.0 using Express Server ",
+  "main": "outhdemo.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "nodemon outhdemo.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "mazenongithub"
+  },
+  "keywords": [
+    "outh",
+    "demo"
+  ],
+  "author": "Mazen Khenaisser",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "nodemon": "^1.17.5",
+    "request": "^2.87.0"
+  }
+}
