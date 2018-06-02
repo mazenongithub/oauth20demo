@@ -1,17 +1,21 @@
 const express = require("express");
 const app = express();
 const request = require("request");
+const keys = require("./keys");
+const redirect_uri = keys.googleCallbackURL;
+const client_id = keys.googleClientID;
+const client_secret = keys.googleClientSecret;
+const testrequest = 'https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=' + redirect_uri +
+    '&prompt=consent&response_type=code&client_id=' + client_id + '&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar.readonly&access_type=offline'
 
 app.get('/', (req, res) => {
 
-    res.send("google-site-verification: google1904836aa719f2f4.html")
+    res.send("<a href=" + testrequest + ">" + testrequest + "</a>")
 })
 app.get('/oauth20/democallback/', (req, res) => {
     var grant_type = 'authorization_code';
     var code = req.query.code;
-    var redirect_uri = 'https%3A%2F%2Fwebdevbootcamp-mazenoncloud9.c9users.io%3A8080%2Foauth20%2Fdemocallback'
-    var client_id = '285043410165-qabp92ca9ss0148lbkqvl2icqo6kkvdj.apps.googleusercontent.com'
-    var client_secret = 'F-Hnj5cJZoLqqRoxnwyn2laj'
+
     var values = "grant_type=" + grant_type +
         "&code=" + code +
         "&redirect_uri=" + redirect_uri +
@@ -33,7 +37,7 @@ app.get('/oauth20/democallback/', (req, res) => {
                 var auth = "Bearer " + access_token
                 console.log(auth)
                 request({
-                    url: 'https://www.googleapis.com/gmail/v1/users/immaisoncrosby@gmail.com/messages',
+                    url: 'https://www.googleapis.com/calendar/v3/users/me/calendarList',
                     headers: {
                         'Authorization': auth
                     }
