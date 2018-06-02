@@ -37,7 +37,7 @@ app.get('/oauth20/democallback/', (req, res) => {
                 var auth = "Bearer " + access_token
                 console.log(auth)
                 request({
-                    url: 'https://www.googleapis.com/calendar/v3/users/me/calendarList',
+                    url: 'https://www.googleapis.com/calendar/v3/calendars/immaisoncrosby@gmail.com/events',
                     headers: {
                         'Authorization': auth
                     }
