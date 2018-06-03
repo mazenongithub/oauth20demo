@@ -2,23 +2,39 @@ const express = require("express");
 const app = express();
 const request = require("request");
 const keys = require("./keys");
-const redirect_uri = keys.googleCallbackURL;
+const insert_uri = keys.googlecalenderinserturi;
+const fetchevents_uri = keys.googlecalenderfetchevents;
+const update_uri = keys.googlecalenderupdate;
+const findevent_uri = keys.googlecalenderfindevent;
 const client_id = keys.googleClientID;
 const client_secret = keys.googleClientSecret;
-const testrequest = 'https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=' + redirect_uri +
-    '&prompt=consent&response_type=code&client_id=' + client_id + '&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar.readonly&access_type=offline'
+const inserturi = 'https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=' + insert_uri +
+    '&prompt=consent&response_type=code&client_id=' + client_id + '&scope=https://www.googleapis.com/auth/calendar&access_type=offline'
+
+const fetchevents = 'https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=' + fetchevents_uri +
+    '&prompt=consent&response_type=code&client_id=' + client_id + '&scope=https://www.googleapis.com/auth/calendar&access_type=offline'
+
+const updateuri = 'https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=' + update_uri +
+    '&prompt=consent&response_type=code&client_id=' + client_id + '&scope=https://www.googleapis.com/auth/calendar&access_type=offline'
+
+const findeventuri = 'https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=' + findevent_uri +
+    '&prompt=consent&response_type=code&client_id=' + client_id + '&scope=https://www.googleapis.com/auth/calendar&access_type=offline'
+
 
 app.get('/', (req, res) => {
 
-    res.send("<a href=" + testrequest + ">" + testrequest + "</a>")
+    res.send("<ul><li><a href=" + inserturi + "> Insert An Event  </a></li>" +
+        "<li><a href=" + fetchevents + "> Show All my Events </a></li>" +
+        "<li><a href=" + updateuri + "> Update Event </a></li>" +
+        "<li><a href=" + findeventuri + "> Find Event </a></ul>")
 })
-app.get('/oauth20/democallback/', (req, res) => {
+app.get('/oauth20/inserturi', (req, res) => {
     var grant_type = 'authorization_code';
     var code = req.query.code;
 
     var values = "grant_type=" + grant_type +
         "&code=" + code +
-        "&redirect_uri=" + redirect_uri +
+        "&redirect_uri=" + insert_uri +
         "&client_id=" + client_id +
         "&client_secret=" + client_secret;
 
@@ -35,16 +51,198 @@ app.get('/oauth20/democallback/', (req, res) => {
                 body = JSON.parse(body);
                 var access_token = body.access_token;
                 var auth = "Bearer " + access_token
-                console.log(auth)
+                var event = {
+                    "end": {
+                        "dateTime": "2018-06-04T17:00:00-07:00",
+                        "timeZone": "America/Los_Angeles"
+                    },
+                    "start": {
+                        "dateTime": "2018-06-04T09:00:00-07:00",
+                        "timeZone": "America/Los_Angeles"
+                    }
+                }
+
+                event = JSON.stringify(event)
+                request.post({
+                    url: 'https://www.googleapis.com/calendar/v3/calendars/immaisoncrosby@gmail.com/events',
+                    body: event,
+                    headers: {
+                        'Authorization': auth,
+                        'Content-Type': 'application/json'
+                    }
+
+                }, function(err, response, body) {
+                    if (!err) {
+                        body = JSON.parse(body);
+                        res.send(body)
+                    }
+                    else {
+                        res.send(err)
+                    }
+                })
+
+
+            }
+            else {
+                res.send(err)
+            }
+
+
+        })
+})
+
+app.get('/oauth20/fetchevents', (req, res) => {
+    var grant_type = 'authorization_code';
+    var code = req.query.code;
+
+    var values = "grant_type=" + grant_type +
+        "&code=" + code +
+        "&redirect_uri=" + fetchevents_uri +
+        "&client_id=" + client_id +
+        "&client_secret=" + client_secret;
+
+    request.post({
+            url: 'https://accounts.google.com/o/oauth2/token',
+            form: values,
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        },
+        function(err, httpResponse, body) {
+            if (!err) {
+
+                body = JSON.parse(body);
+                var access_token = body.access_token;
+                var auth = "Bearer " + access_token;
                 request({
                     url: 'https://www.googleapis.com/calendar/v3/calendars/immaisoncrosby@gmail.com/events',
                     headers: {
                         'Authorization': auth
                     }
+
                 }, function(err, response, body) {
-                    body = JSON.parse(body);
-                    res.send(body)
+                    if (!err) {
+                        body = JSON.parse(body);
+                        res.send(body)
+                    }
+                    else {
+                        res.send(err)
+                    }
                 })
+
+
+            }
+            else {
+                res.send(err)
+            }
+
+
+        })
+})
+
+app.get('/oauth20/updateuri', (req, res) => {
+    var grant_type = 'authorization_code';
+    var code = req.query.code;
+
+    var values = "grant_type=" + grant_type +
+        "&code=" + code +
+        "&redirect_uri=" + update_uri +
+        "&client_id=" + client_id +
+        "&client_secret=" + client_secret;
+
+    request.post({
+            url: 'https://accounts.google.com/o/oauth2/token',
+            form: values,
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        },
+        function(err, httpResponse, body) {
+            if (!err) {
+
+                body = JSON.parse(body);
+                var access_token = body.access_token;
+                var auth = "Bearer " + access_token
+                var event = {
+                    "end": {
+                        "dateTime": "2018-06-05T17:00:00-07:00",
+                        "timeZone": "America/Los_Angeles"
+                    },
+                    "start": {
+                        "dateTime": "2018-06-05T09:00:00-07:00",
+                        "timeZone": "America/Los_Angeles"
+                    }
+                }
+                var eventid = "6j1kou0p8tgni3r60sc0alh4i5";
+                event = JSON.stringify(event)
+                request.put({
+                    url: 'https://www.googleapis.com/calendar/v3/calendars/immaisoncrosby@gmail.com/events/' + eventid,
+                    body: event,
+                    headers: {
+                        'Authorization': auth,
+                        'Content-Type': 'application/json'
+                    }
+
+                }, function(err, response, body) {
+                    if (!err) {
+                        body = JSON.parse(body);
+                        res.send(body)
+                    }
+                    else {
+                        res.send(err)
+                    }
+                })
+
+
+            }
+            else {
+                res.send(err)
+            }
+
+
+        })
+})
+
+app.get('/oauth20/findeventuri', (req, res) => {
+    var grant_type = 'authorization_code';
+    var code = req.query.code;
+
+    var values = "grant_type=" + grant_type +
+        "&code=" + code +
+        "&redirect_uri=" + findevent_uri +
+        "&client_id=" + client_id +
+        "&client_secret=" + client_secret;
+
+    request.post({
+            url: 'https://accounts.google.com/o/oauth2/token',
+            form: values,
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        },
+        function(err, httpResponse, body) {
+            if (!err) {
+
+                body = JSON.parse(body);
+                var access_token = body.access_token;
+                var auth = "Bearer " + access_token;
+                var eventid = '6j1kou0p8tgni3r60sc0alh4i5'
+                request({
+                    url: 'https://www.googleapis.com/calendar/v3/calendars/immaisoncrosby@gmail.com/events/' + eventid,
+                    headers: {
+                        'Authorization': auth
+                    }
+
+                }, function(err, response, body) {
+                    if (!err) {
+                        body = JSON.parse(body);
+                        res.send(body)
+                    }
+                    else {
+                        res.send(err)
+                    }
+                })
+
 
             }
             else {
