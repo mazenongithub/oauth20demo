@@ -316,17 +316,15 @@ app.get('/oauth20/eventdeleteuri', (req, res) => {
 app.get('/oauth20/clientcredential/fetchevents', (req, res) => {
     var iat = Math.round(new Date() / 1000);
     var exp = iat + 3600;
-    var signature = keys.googleprivatekey;
     var sign = crypto.createSign('RSA-SHA256');
-    sign.update('abcdef'); // data from your file would go here
-    var sig = sign.sign(signature, 'hex');
-    console.log(sig)
+    sign.update(keys.googleprivatekey); // data from your file would go here
+    var signature = sign.sign(keys.googleprivatekey, 'hex');
+    console.log(signature)
+    signature = base64url(signature);
     var baseheader = { "alg": "RS256", "typ": "JWT" };
-    baseheader = JSON.stringify(baseheader)
-    baseheader = base64url(baseheader)
-    //console.log(baseheader)
-    sig = base64url(sig)
-    var claimtofame = {
+    baseheader = JSON.stringify(baseheader);
+    baseheader = base64url(baseheader);
+    var myclaim = {
         "iss": "egeotechnical@egeotechnical-199216.iam.gserviceaccount.com",
         "scope": "https://www.googleapis.com/auth/calendar",
         "aud": "https://accounts.google.com/o/oauth2/token",
@@ -334,14 +332,15 @@ app.get('/oauth20/clientcredential/fetchevents', (req, res) => {
         "iat": iat,
         "sub": "immaisoncrosby@gmail.com"
     }
-    claimtofame = JSON.stringify(claimtofame);
-    claimtofame = base64url(claimtofame)
-    var jwt = baseheader + '.' + claimtofame + '.' + sig;
+    myclaim = JSON.stringify(myclaim);
+    myclaim = base64url(myclaim);
+    var jwt = baseheader + '.' + myclaim + '.' + signature;
+
 
     var grant_type = 'urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer';
     var values = "grant_type=" + grant_type +
         "&assertion=" + jwt;
-    console.log(values)
+
     request.post({
             url: 'https://accounts.google.com/o/oauth2/token',
             form: values,
