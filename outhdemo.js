@@ -1,7 +1,10 @@
 const express = require("express");
 const app = express();
 const request = require("request");
+const base64url = require("base64url");
+var crypto = require('crypto');
 const keys = require("./keys");
+var jwt = require('jsonwebtoken');
 const insert_uri = keys.googlecalenderinserturi;
 const fetchevents_uri = keys.googlecalenderfetchevents;
 const update_uri = keys.googlecalenderupdate;
@@ -306,6 +309,55 @@ app.get('/oauth20/eventdeleteuri', (req, res) => {
                 res.send(err)
             }
 
+
+        })
+})
+
+app.get('/oauth20/clientcredential/fetchevents', (req, res) => {
+    var iat = Math.round(new Date() / 1000);
+    var exp = iat + 3600;
+    var signature = keys.googleprivatekey;
+    var sign = crypto.createSign('RSA-SHA256');
+    sign.update('abcdef'); // data from your file would go here
+    var sig = sign.sign(signature, 'hex');
+    console.log(sig)
+    var baseheader = { "alg": "RS256", "typ": "JWT" };
+    baseheader = JSON.stringify(baseheader)
+    baseheader = base64url(baseheader)
+    //console.log(baseheader)
+    sig = base64url(sig)
+    var claimtofame = {
+        "iss": "egeotechnical@egeotechnical-199216.iam.gserviceaccount.com",
+        "scope": "https://www.googleapis.com/auth/calendar",
+        "aud": "https://accounts.google.com/o/oauth2/token",
+        "exp": exp,
+        "iat": iat,
+        "sub": "immaisoncrosby@gmail.com"
+    }
+    claimtofame = JSON.stringify(claimtofame);
+    claimtofame = base64url(claimtofame)
+    var jwt = baseheader + '.' + claimtofame + '.' + sig;
+
+    var grant_type = 'urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer';
+    var values = "grant_type=" + grant_type +
+        "&assertion=" + jwt;
+    console.log(values)
+    request.post({
+            url: 'https://accounts.google.com/o/oauth2/token',
+            form: values,
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        },
+        function(err, httpResponse, body) {
+            if (!err) {
+
+                res.send(body)
+            }
+            else {
+
+                res.send(err)
+            }
 
         })
 })
