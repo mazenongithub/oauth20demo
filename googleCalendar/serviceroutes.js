@@ -4,7 +4,7 @@ var crypto = require('crypto');
 const keys = require("../keys");
 module.exports = app => {
 
-    app.get('/oauth20/clientcredential/fetchevents', (req, res) => {
+    app.get('/oauth20/clientcredential / fetchevents', (req, res) => {
         var private_key = keys.googleprivatekey;
         var iat = Math.round(new Date() / 1000);
         var exp = iat + 3600;
