@@ -34,6 +34,8 @@ app.get('/', (req, res) => {
         "<li><a href=" + findeventuri + "> Find Event </a>" +
         "<li><a href=" + eventdeleteuri + "> Delete Event </a></ul>")
 })
-require('./googleCalendar/authentication')(app);
-require('./googleCalendar/serviceroutes')(app);
+
+require('./googleCalendar/calenderroutes')(app);
+require('./googleCalendar/aclroutes')(app);
+require('./googleCalendar/eventroutes')(app);
 app.listen(process.env.PORT);
