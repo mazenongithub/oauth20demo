@@ -36,13 +36,24 @@ module.exports = app => {
                     var access_token = body.access_token;
                     var auth = "Bearer " + access_token
                     var event = {
-                        "end": {
-                            "dateTime": "2018-06-04T17:00:00-07:00",
-                            "timeZone": "America/Los_Angeles"
+                        status: "confirmed",
+                        summary: "Project No. 1776 - Title",
+                        description: "Complete insert route for google calender",
+                        start: {
+                            dateTime: "2018-06-07T19:00:00-07:00"
                         },
-                        "start": {
-                            "dateTime": "2018-06-04T09:00:00-07:00",
-                            "timeZone": "America/Los_Angeles"
+                        end: {
+                            dateTime: "2018-06-07T20:00:00-07:00"
+                        },
+                        visibility: "private",
+                        extendedProperties: {
+                            private: {
+                                everyoneDeclinedDismissed: "-1"
+                            }
+                        },
+                        guestsCanInviteOthers: false,
+                        reminders: {
+                            useDefault: true
                         }
                     }
 
@@ -98,7 +109,7 @@ module.exports = app => {
                     var access_token = body.access_token;
                     var auth = "Bearer " + access_token;
                     request({
-                        url: 'https://www.googleapis.com/calendar/v3/calendars/immaisoncrosby@gmail.com/events',
+                        url: 'https://www.googleapis.com/calendar/v3/calendars/immaisoncrosby@gmail.com/acl',
                         headers: {
                             'Authorization': auth
                         }
@@ -261,7 +272,7 @@ module.exports = app => {
                     var auth = "Bearer " + access_token;
                     var eventid = 'r2had1orehon5eth1tsqdqmg4g'
                     request.delete({
-                        url: 'https://www.googleapis.com/calendar/v3/calendars/immaisoncrosby@gmail.com/events/' + eventid,
+                        url: 'https://www.googleapis.com/calendar/v3/calendars/user:immaisoncrosby@gmail.com/events/' + eventid,
                         headers: {
                             'Authorization': auth
                         }
