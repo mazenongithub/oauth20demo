@@ -4,6 +4,8 @@ const request = require("request");
 const base64url = require("base64url");
 var crypto = require('crypto');
 const keys = require("./keys");
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
 const insert_uri = keys.googlecalenderinserturi;
 const fetchevents_uri = keys.googlecalenderfetchevents;
 const update_uri = keys.googlecalenderupdate;
@@ -25,7 +27,12 @@ const findeventuri = 'https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=
 
 const eventdeleteuri = 'https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=' + eventdelete_uri +
     '&prompt=consent&response_type=code&client_id=' + client_id + '&scope=https://www.googleapis.com/auth/calendar&access_type=offline'
-
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "https://www.egeotechnical.com");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Credentials", true);
+    next();
+});
 app.get('/', (req, res) => {
 
     res.send("<ul><li><a href=" + inserturi + "> Insert An Event  </a></li>" +
@@ -35,7 +42,5 @@ app.get('/', (req, res) => {
         "<li><a href=" + eventdeleteuri + "> Delete Event </a></ul>")
 })
 
-require('./googleCalendar/calenderroutes')(app);
-require('./googleCalendar/aclroutes')(app);
 require('./googleCalendar/eventroutes')(app);
 app.listen(process.env.PORT);

@@ -71,7 +71,7 @@ module.exports = app => {
             })
     })
 
-    app.get('/googlecalendar/showmyevent', (req, res) => {
+    app.get('/googlecalendar/:eventid/showmyevent', (req, res) => {
         var private_key = keys.googleprivatekey;
         var iat = Math.round(new Date() / 1000);
         var exp = iat + 3600;
@@ -111,7 +111,8 @@ module.exports = app => {
                     body = JSON.parse(body);
                     var access_token = body.access_token;
                     var auth = "Bearer " + access_token
-                    var eventid = "4n145klns8nq4098072na8labo";
+                    var eventid = req.params.eventid;
+                    console.log(eventid)
                     request({
                         url: 'https://www.googleapis.com/calendar/v3/calendars/np4qfs6med0m5qpiv00peg48bk@group.calendar.google.com/events/' + eventid,
                         headers: {
@@ -138,7 +139,7 @@ module.exports = app => {
             })
     })
 
-    app.get('/googlecalendar/insertevent', (req, res) => {
+    app.post('/googlecalendar/insertevent', (req, res) => {
         var private_key = keys.googleprivatekey;
         var iat = Math.round(new Date() / 1000);
         var exp = iat + 3600;
@@ -174,20 +175,28 @@ module.exports = app => {
             },
             function(err, httpResponse, body) {
                 if (!err) {
-
+                    var summary = req.body.summary;
+                    var description = req.body.description;
+                    var start = req.body.start;
+                    var end = req.body.end;
+                    var employee = req.body.employee;
                     body = JSON.parse(body);
                     var access_token = body.access_token;
                     var auth = "Bearer " + access_token
                     var event = {
-                        status: "confirmed",
-                        summary: "Project No. 1776 - Title",
-                        description: "Complete insert route for google calender",
+                        summary: summary,
+                        description: description,
                         start: {
-                            dateTime: "2018-06-07T19:00:00-07:00"
+                            dateTime: start
+                            //dateTime: "2018-06-07T19:00:00-07:00"
                         },
                         end: {
-                            dateTime: "2018-06-07T20:00:00-07:00"
+                            dateTime: end
                         },
+                        attendees: [{
+                            email: employee,
+                            responseStatus: "needsAction"
+                        }],
                         visibility: "private",
                         extendedProperties: {
                             private: {
@@ -229,7 +238,14 @@ module.exports = app => {
             })
     })
 
-    app.get('/googlecalendar/updatevent', (req, res) => {
+    app.post('/googlecalendar/updatevent', (req, res) => {
+        var summary = req.body.summary;
+        var description = req.body.description;
+        var start = req.body.start;
+        var end = req.body.end;
+        var employee = req.body.employee;
+        var eventid = req.body.eventid;
+
         var private_key = keys.googleprivatekey;
         var iat = Math.round(new Date() / 1000);
         var exp = iat + 3600;
@@ -270,15 +286,19 @@ module.exports = app => {
                     var access_token = body.access_token;
                     var auth = "Bearer " + access_token
                     var event = {
-                        status: "confirmed",
-                        summary: "Project No. 1776 - Title",
-                        description: "Complete insert route for google calender",
+                        summary: summary,
+                        description: description,
                         start: {
-                            dateTime: "2018-06-07T19:00:00-07:00"
+                            dateTime: start
+                            //dateTime: "2018-06-07T19:00:00-07:00"
                         },
                         end: {
-                            dateTime: "2018-06-07T20:00:00-07:00"
+                            dateTime: end
                         },
+                        attendees: [{
+                            email: employee,
+                            responseStatus: "needsAction"
+                        }],
                         visibility: "private",
                         extendedProperties: {
                             private: {
@@ -290,7 +310,7 @@ module.exports = app => {
                             useDefault: true
                         }
                     }
-                    var eventid = "1a4dk3hnqsckr55711ql3tepus"
+
                     event = JSON.stringify(event)
                     request.put({
                         url: 'https://www.googleapis.com/calendar/v3/calendars/np4qfs6med0m5qpiv00peg48bk@group.calendar.google.com/events/' + eventid,
@@ -320,7 +340,7 @@ module.exports = app => {
             })
     })
 
-    app.get('/googlecalendar/deletevent', (req, res) => {
+    app.get('/googlecalendar/:eventid/deletevent', (req, res) => {
         var private_key = keys.googleprivatekey;
         var iat = Math.round(new Date() / 1000);
         var exp = iat + 3600;
@@ -360,7 +380,7 @@ module.exports = app => {
                     body = JSON.parse(body);
                     var access_token = body.access_token;
                     var auth = "Bearer " + access_token
-                    var eventid = "1a4dk3hnqsckr55711ql3tepus"
+                    var eventid = req.params.eventid;
                     request.delete({
                         url: 'https://www.googleapis.com/calendar/v3/calendars/np4qfs6med0m5qpiv00peg48bk@group.calendar.google.com/events/' + eventid,
                         headers: {
