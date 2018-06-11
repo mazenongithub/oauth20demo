@@ -179,6 +179,7 @@ module.exports = app => {
                     var description = req.body.description;
                     var start = req.body.start;
                     var end = req.body.end;
+
                     var employee = req.body.employee;
                     body = JSON.parse(body);
                     var access_token = body.access_token;
@@ -210,6 +211,7 @@ module.exports = app => {
                     }
 
                     event = JSON.stringify(event)
+                    console.log(event)
                     request.post({
                         url: 'https://www.googleapis.com/calendar/v3/calendars/np4qfs6med0m5qpiv00peg48bk@group.calendar.google.com/events',
                         body: event,
