@@ -21,7 +21,8 @@ module.exports = app => {
         }
         claimSet = JSON.stringify(claimSet);
         claimSet = base64url(claimSet)
-        res.send(claimSet)
+        const sign = crypto.createSign('RSA-SHA256');
+        res.send("ok")
     })
 
     app.get('/googlecalendar/:eventid/showmyevent', (req, res) => {
