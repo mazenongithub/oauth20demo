@@ -1,12 +1,12 @@
 const request = require("request");
 const base64url = require("base64url");
-var crypto = require('crypto-js');
+var crypto = require('crypto');
 const keys = require("../keys");
 module.exports = app => {
 
     app.get('/googlecalendar/showallmyevents', (req, res) => {
         var private_key = keys.googleprivatekey;
-
+        res.send(private_key)
         var iat = Math.round(new Date() / 1000);
         var exp = iat + 3600;
         // data from your file would go here
@@ -27,7 +27,49 @@ module.exports = app => {
         sign.update(baseheader + "." + claimSet);
         var mysignature = sign.sign(keys.googleprivatekey, 'base64');
         mysignature = encodeURIComponent(mysignature)
-        res.send(mysignature)
+        var jwt = baseheader + "." + claimSet + "." + mysignature;
+        var grant_type = 'urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer';
+        var values = "grant_type=" + grant_type +
+            "&assertion=" + jwt;
+
+        request.post({
+                url: 'https://accounts.google.com/o/oauth2/token',
+                body: values,
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            },
+            function(err, httpResponse, body) {
+                if (!err) {
+
+                    body = JSON.parse(body);
+                    var access_token = body.access_token;
+                    var auth = "Bearer " + access_token
+
+                    request({
+                        url: 'https://www.googleapis.com/calendar/v3/calendars/np4qfs6med0m5qpiv00peg48bk@group.calendar.google.com/events',
+                        headers: {
+                            'Authorization': auth
+                        }
+
+                    }, function(err, response, body) {
+                        if (!err) {
+                            body = JSON.parse(body);
+                            res.send(body)
+                        }
+                        else {
+                            res.send(err)
+                        }
+                    })
+
+
+                }
+                else {
+                    res.send(err)
+                }
+
+
+            })
     })
 
     app.get('/googlecalendar/:eventid/showmyevent', (req, res) => {
