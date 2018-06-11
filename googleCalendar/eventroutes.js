@@ -22,6 +22,8 @@ module.exports = app => {
         claimSet = JSON.stringify(claimSet);
         claimSet = base64url(claimSet)
         const sign = crypto.createSign('RSA-SHA256');
+        //console.log(baseheader + "." + claimSet)
+        sign.update(baseheader + "." + claimSet);
         res.send("ok")
     })
 
