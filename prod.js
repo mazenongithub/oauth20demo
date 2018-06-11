@@ -6,6 +6,6 @@ module.exports = {
     googlecalenderupdate: process.env.googlecalenderupdate,
     googlecalenderfindevent: process.env.googlecalenderfindevent,
     googlecalendereventdelete: process.env.googlecalendereventdelete,
-    googleprivatekey: process.env.googleprivatekey
+    googleprivatekey: process.env.googleprivatekey.replace(/\\n/g, '\n')
 
 };
