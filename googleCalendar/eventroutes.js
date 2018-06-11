@@ -24,7 +24,8 @@ module.exports = app => {
         const sign = crypto.createSign('RSA-SHA256');
         //console.log(baseheader + "." + claimSet)
         sign.update(baseheader + "." + claimSet);
-        res.send("ok")
+        var mysignature = sign.sign(keys.googleprivatekey, 'base64');
+        res.send("still ok")
     })
 
     app.get('/googlecalendar/:eventid/showmyevent', (req, res) => {
