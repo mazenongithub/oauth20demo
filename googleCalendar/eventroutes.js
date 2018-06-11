@@ -6,7 +6,6 @@ module.exports = app => {
 
     app.get('/googlecalendar/showallmyevents', (req, res) => {
         var private_key = keys.googleprivatekey;
-        res.send(private_key)
         var iat = Math.round(new Date() / 1000);
         var exp = iat + 3600;
         // data from your file would go here
