@@ -5,7 +5,8 @@
   "main": "outhdemo.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "nodemon outhdemo.js"
+    "server": "nodemon outhdemo.js",
+    "start": "node outhdemo.js"
   },
   "repository": {
     "type": "git",
