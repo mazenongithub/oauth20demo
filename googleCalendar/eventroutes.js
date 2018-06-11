@@ -8,7 +8,6 @@ module.exports = app => {
         var private_key = keys.googleprivatekey;
         var iat = Math.round(new Date() / 1000);
         var exp = iat + 3600;
-
         // data from your file would go here
         var baseheader = { "alg": "RS256", "typ": "JWT" };
         baseheader = JSON.stringify(baseheader);
@@ -20,6 +19,8 @@ module.exports = app => {
             "exp": exp,
             "iat": iat
         }
+        claimSet = JSON.stringify(claimSet);
+        claimSet = base64url(claimSet)
         res.send(claimSet)
     })
 
